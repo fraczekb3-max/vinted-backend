@@ -64,8 +64,11 @@ app.post('/api/admin/generate-code', async (req, res) => {
   try {
     const randomCode = 'VINTED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    // Opcjonalnie zapis do bazy (jeśli chcesz, żeby generowane kody trafiały do bazy):
-    // await supabase.from('access_codes').insert([{ code: randomCode, type: 'monthly' }]);
+    // Zapis wygenerowanego kodu do bazy Supabase
+    await supabase.from('access_codes').insert([{ 
+      code: randomCode, 
+      type: duration === 'lifetime' ? 'lifetime' : 'monthly' 
+    }]);
 
     res.json({ code: randomCode });
   } catch (err) {
@@ -105,9 +108,12 @@ app.post('/api/simpay-ipn', async (req, res) => {
 app.post('/api/generate', async (req, res) => {
   const { code, platform, images } = req.body;
 
-  const { data } = await supabase.from('access_codes').select('*').eq('code', code).single();
-  if (!data || (data.expires_at && new Date(data.expires_at) < new Date())) {
-    return res.status(401).json({ error: 'Brak aktywnego dostępu.' });
+  // Jeśli to nie jest admin, sprawdź kod w bazie Supabase
+  if (code !== 'ADMIN') {
+    const { data } = await supabase.from('access_codes').select('*').eq('code', code).single();
+    if (!data || (data.expires_at && new Date(data.expires_at) < new Date())) {
+      return res.status(401).json({ error: 'Brak aktywnego dostępu.' });
+    }
   }
 
   try {
