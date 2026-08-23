@@ -1,7 +1,7 @@
 {
   "name": "vinted-backend",
   "version": "1.0.0",
-  "description": "Backend dla AI Listing Generator",
+  "description": "Backend dla generatora AI",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
