@@ -32,12 +32,10 @@ app.post('/api/verify-code', async (req, res) => {
     return res.status(400).json({ valid: false, message: 'Brak kodu.' });
   }
 
-  // Sprawdzanie czy to kod administratora
   if (code.trim() === 'ADMIN') {
     return res.json({ valid: true, type: 'admin' });
   }
 
-  // Sprawdzanie zwykłego kodu w bazie Supabase
   const { data, error } = await supabase
     .from('access_codes')
     .select('*')
@@ -116,7 +114,6 @@ app.post('/api/generate', async (req, res) => {
     return res.status(401).json({ error: 'Brak kodu dostępu.' });
   }
 
-  // Jeśli to nie jest admin, sprawdź kod w bazie Supabase
   if (code.trim() !== 'ADMIN') {
     const { data, error } = await supabase.from('access_codes').select('*').eq('code', code.trim().toUpperCase()).single();
     if (error || !data || (data.expires_at && new Date(data.expires_at) < new Date())) {
@@ -129,18 +126,18 @@ app.post('/api/generate', async (req, res) => {
       return res.status(400).json({ error: 'Nie wybrano żadnych zdjęć.' });
     }
 
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Użycie poprawnej nazwy modelu zgodnej z najnowszym API Google
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
     const imageParts = images.map(img => ({
       inlineData: { data: img.base64, mimeType: img.mimeType }
     }));
 
     const prompt = `Przeanalizuj te zdjęcia i przygotuj profesjonalny opis przedmiotu na platformę ${platform ? platform.toUpperCase() : 'VINTED'}. 
-    Zwróć wynik WYNIKOWO w formacie JSON zawierającym pola np. "title" oraz "description". Nie dodawaj żadnego dodatkowego tekstu poza czystym obiektem JSON.`;
+    Zwróć wynik WYNIKOWO w formacie JSON zawierającym pola "title" oraz "description". Nie dodawaj żadnego dodatkowego tekstu poza czystym obiektem JSON.`;
 
     const response = await model.generateContent([prompt, ...imageParts]);
     let rawText = response.response.text().trim();
     
-    // Czyszczenie formatowania markdown jeśli istnieje
     rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
     const parsedJson = JSON.parse(rawText);
