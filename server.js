@@ -14,8 +14,8 @@ app.post('/api/generate', async (req, res) => {
   const { platform, images, promptCorrection } = req.body;
 
   try {
-    // Zmieniono na model wskazany w komunikacie błędu: gemini-3.6-flash
-    const model = ai.getGenerativeModel({ model: 'gemini-3.6-flash' });
+    // Używamy stabilnego modelu gemini-1.5-flash ze starszą, pewną wersją SDK
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
     let response;
 
     const targetPlatform = platform ? platform.toUpperCase() : 'VINTED';
