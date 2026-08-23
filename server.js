@@ -14,24 +14,25 @@ app.post('/api/generate', async (req, res) => {
   const { platform, price, images, promptCorrection } = req.body;
 
   try {
-    // Używamy sprawdzonego i wydajnego modelu flash
     const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
     let response;
 
     const targetPlatform = platform ? platform.toUpperCase() : 'VINTED';
-    const priceInstruction = price && price.trim() !== '' 
-      ? `Użyj dokładnie podanej ceny: ${price}.` 
-      : `Przeanalizuj przedmiot i oszacuj jego realną, rynkową cenę w PLN (np. '45 PLN').`;
+    const userPriceInfo = price && price.trim() !== '' 
+      ? `Użytkownik wpisał własną cenę: ${price} PLN. Oceń czy ta cena nie jest zawyżona lub zaniżona w stosunku do realnej wartości rynkowej ze zdjęć.` 
+      : `Użytkownik nie podał ceny – musisz ją sam wycenić.`;
 
     if (promptCorrection) {
-      const prompt = `Jesteś profesjonalnym copywriterem e-commerce. 
-      Platforma docelowa: ${targetPlatform}.
+      const prompt = `Jesteś profesjonalnym copywriterem i ekspertem ds. wyceny e-commerce. 
+      Platforma: ${targetPlatform}.
       ${promptCorrection}
       
-      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON, bez żadnych znaczników markdown (nie używaj ```json ani ```). Obiekt musi zawierać dokładnie trzy pola:
-      1. "title" (krótki, chwytliwy tytuł ogłoszenia)
-      2. "description" (pełny opis z hashtagami)
-      3. "suggestedPrice" (oszacowana lub potwierdzona cena, np. "50 PLN")`;
+      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu ```json). Obiekt musi zawierać dokładnie cztery pola:
+      1. "title" (tytuł ogłoszenia)
+      2. "description" (opis z hashtagami)
+      3. "suggestedPrice" (normalna, rynkowa cena, np. "50 PLN")
+      4. "quickSalePrice" (niższa cena do szybkiej sprzedaży, np. "35 PLN")
+      5. "priceFeedback" (krótki komentarz AI do ceny, np. informacja czy cena wpisana przez użytkownika jest OK, czy za wysoka i dlaczego)`;
 
       response = await model.generateContent(prompt);
     } else {
@@ -43,13 +44,14 @@ app.post('/api/generate', async (req, res) => {
         inlineData: { data: img.base64, mimeType: img.mimeType }
       }));
 
-      const prompt = `Przeanalizuj załączone zdjęcia przedmiotu i przygotuj profesjonalne ogłoszenie na platformę ${targetPlatform}.
-      Zasada dotycząca ceny: ${priceInstruction}
+      const prompt = `Przeanalizuj załączone zdjęcia przedmiotu dla platformy ${targetPlatform}.${userPriceInfo}
       
-      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON, bez żadnych znaczników markdown (nie używaj ```json ani ```). Obiekt musi zawierać dokładnie trzy pola:
+      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu ```json), zawierający dokładnie pięć pól:
       - "title": krótki, atrakcyjny tytuł
       - "description": profesjonalny opis ze stanem przedmiotu i hashtagami
-      - "suggestedPrice": sugerowana lub podana cena (np. "60 PLN")`;
+      - "suggestedPrice": normalna, rynkowa cena (np. "60 PLN")
+      - "quickSalePrice": cena do szybkiej sprzedaży (nieco niższa, żeby poszło od ręki, np. "45 PLN")
+      - "priceFeedback": jeśli użytkownik podał cenę, oceń ją (np. "Twoja cena jest za wysoka jak na ten stan, rynkowo wart jest max 50 PLN"). Jeśli użytkownik nic nie podał, napisz np. "Oto optymalna wycena rynkowa."`;
 
       response = await model.generateContent([prompt, ...imageParts]);
     }
@@ -59,8 +61,6 @@ app.post('/api/generate', async (req, res) => {
     }
 
     let rawText = response.response.text().trim();
-    
-    // Agresywne czyszczenie wszystkiego, co mogłoby popsuć JSON-a
     rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
     
     const jsonStartIndex = rawText.indexOf('{');
