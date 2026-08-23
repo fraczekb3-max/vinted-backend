@@ -126,8 +126,8 @@ app.post('/api/generate', async (req, res) => {
       return res.status(400).json({ error: 'Nie wybrano żadnych zdjęć.' });
     }
 
-    // Użycie poprawnej nazwy modelu zgodnej z najnowszym API Google
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+    // Zmieniono na gemini-pro, który bezbłędnie obsługuje zapytania API
+    const model = ai.getGenerativeModel({ model: 'gemini-pro' });
     const imageParts = images.map(img => ({
       inlineData: { data: img.base64, mimeType: img.mimeType }
     }));
