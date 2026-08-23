@@ -14,8 +14,8 @@ app.post('/api/generate', async (req, res) => {
   const { platform, images, promptCorrection } = req.body;
 
   try {
-    // Używamy stabilnego modelu gemini-1.5-pro bez żadnych prefiksów
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    // Używamy bezpiecznej, uniwersalnej nazwy modelu zgodnej z każdą wersją SDK
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
     let response;
 
     const targetPlatform = platform ? platform.toUpperCase() : 'VINTED';
