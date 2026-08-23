@@ -14,7 +14,8 @@ app.post('/api/generate', async (req, res) => {
   const { platform, price, images, promptCorrection } = req.body;
 
   try {
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Użycie modelu zgodnego ze stabilnym endpointem API
+    const model = ai.getGenerativeModel({ model: 'models/gemini-1.5-flash' });
     let response;
 
     const targetPlatform = platform ? platform.toUpperCase() : 'VINTED';
