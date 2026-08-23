@@ -11,20 +11,17 @@ const GEMINI_API_KEY = 'AQ.Ab8RN6LPZvZpFue7nwSHHX5HlJxMfdPpx9mm-zBc1ZHwqeovkQ';
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 app.post('/api/generate', async (req, res) => {
-  const { platform, price, images, promptCorrection } = req.body;
+  const { platform, images, promptCorrection } = req.body;
 
   try {
-    // Używamy czystej nazwy modelu bez prefiksu "models/"
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Używamy stabilnego modelu gemini-1.5-pro bez żadnych prefiksów
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-pro' });
     let response;
 
     const targetPlatform = platform ? platform.toUpperCase() : 'VINTED';
-    const userPriceInfo = price && price.trim() !== '' 
-      ? `Użytkownik wpisał własną cenę: ${price} PLN. Oceń czy ta cena nie jest zawyżona lub zaniżona w stosunku do realnej wartości rynkowej ze zdjęć.` 
-      : `Użytkownik nie podał ceny – musisz ją sam wycenić.`;
 
     if (promptCorrection) {
-      const prompt = `Jesteś profesjonalnym copywriterem i ekspertem ds. wyceny e-commerce. Platforma: ${targetPlatform}. ${promptCorrection} Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json). Obiekt musi zawierać dokładnie pięć pól: "title", "description", "suggestedPrice", "quickSalePrice", "priceFeedback".`;
+      const prompt = `Jesteś profesjonalnym copywriterem i ekspertem ds. wyceny e-commerce. Platforma: ${targetPlatform}. ${promptCorrection} Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json). Obiekt musi zawierać dokładnie cztery pola: "title", "description", "suggestedPrice", "quickSalePrice".`;
 
       response = await model.generateContent(prompt);
     } else {
@@ -36,7 +33,11 @@ app.post('/api/generate', async (req, res) => {
         inlineData: { data: img.base64, mimeType: img.mimeType }
       }));
 
-      const prompt = `Przeanalizuj załączone zdjęcia przedmiotu dla platformy ${targetPlatform}. ${userPriceInfo} Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json), zawierający dokładnie pięć pól: "title" (krótki, atrakcyjny tytuł), "description" (profesjonalny opis ze stanem i hashtagami), "suggestedPrice" (normalna cena rynkowa, np. "60 PLN"), "quickSalePrice" (niższa cena do szybkiej sprzedaży, np. "45 PLN"), "priceFeedback" (komentarz do ceny użytkownika lub informacja o wycenie).`;
+      const prompt = `Przeanalizuj załączone zdjęcia przedmiotu dla platformy ${targetPlatform}. Oceń jego stan i rynkową wartość. Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json), zawierający dokładnie cztery pola: 
+      - "title": krótki, atrakcyjny tytuł ogłoszenia
+      - "description": profesjonalny opis ze stanem przedmiotu i hashtagami
+      - "suggestedPrice": normalna, rynkowa cena (np. "60 PLN")
+      - "quickSalePrice": niższa cena do szybkiej sprzedaży (np. "45 PLN")`;
 
       response = await model.generateContent([prompt, ...imageParts]);
     }
