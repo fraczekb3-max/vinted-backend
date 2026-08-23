@@ -1,0 +1,14 @@
+{
+  "name": "vinted-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "@google/genai": "^0.1.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
