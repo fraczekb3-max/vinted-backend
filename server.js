@@ -28,8 +28,12 @@ function generateCode(prefix) {
 app.post('/api/verify-code', async (req, res) => {
   const { code } = req.body;
 
+  if (!code) {
+    return res.status(400).json({ valid: false, message: 'Brak kodu.' });
+  }
+
   // Sprawdzanie czy to kod administratora
-  if (code === 'ADMIN') {
+  if (code.trim() === 'ADMIN') {
     return res.json({ valid: true, type: 'admin' });
   }
 
@@ -64,7 +68,6 @@ app.post('/api/admin/generate-code', async (req, res) => {
   try {
     const randomCode = 'VINTED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    // Zapis wygenerowanego kodu do bazy Supabase
     await supabase.from('access_codes').insert([{ 
       code: randomCode, 
       type: duration === 'lifetime' ? 'lifetime' : 'monthly' 
@@ -72,6 +75,7 @@ app.post('/api/admin/generate-code', async (req, res) => {
 
     res.json({ code: randomCode });
   } catch (err) {
+    console.error('Błąd generowania kodu w bazie:', err);
     res.status(500).json({ error: 'Błąd serwera podczas generowania kodu.' });
   }
 });
@@ -108,32 +112,42 @@ app.post('/api/simpay-ipn', async (req, res) => {
 app.post('/api/generate', async (req, res) => {
   const { code, platform, images } = req.body;
 
+  if (!code) {
+    return res.status(401).json({ error: 'Brak kodu dostępu.' });
+  }
+
   // Jeśli to nie jest admin, sprawdź kod w bazie Supabase
-  if (code !== 'ADMIN') {
-    const { data } = await supabase.from('access_codes').select('*').eq('code', code).single();
-    if (!data || (data.expires_at && new Date(data.expires_at) < new Date())) {
+  if (code.trim() !== 'ADMIN') {
+    const { data, error } = await supabase.from('access_codes').select('*').eq('code', code.trim().toUpperCase()).single();
+    if (error || !data || (data.expires_at && new Date(data.expires_at) < new Date())) {
       return res.status(401).json({ error: 'Brak aktywnego dostępu.' });
     }
   }
 
   try {
+    if (!images || images.length === 0) {
+      return res.status(400).json({ error: 'Nie wybrano żadnych zdjęć.' });
+    }
+
     const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const imageParts = images.map(img => ({
       inlineData: { data: img.base64, mimeType: img.mimeType }
     }));
 
-    const response = await model.generateContent([
-      `Przeanalizuj te zdjęcia dla platformy: ${platform.toUpperCase()}`,
-      ...imageParts
-    ]);
+    const prompt = `Przeanalizuj te zdjęcia i przygotuj profesjonalny opis przedmiotu na platformę ${platform ? platform.toUpperCase() : 'VINTED'}. 
+    Zwróć wynik WYNIKOWO w formacie JSON zawierającym pola np. "title" oraz "description". Nie dodawaj żadnego dodatkowego tekstu poza czystym obiektem JSON.`;
 
+    const response = await model.generateContent([prompt, ...imageParts]);
     let rawText = response.response.text().trim();
-    if (rawText.startsWith('```json')) rawText = rawText.replace(/^```json/, '').replace(/```$/, '').trim();
-    if (rawText.startsWith('```')) rawText = rawText.replace(/^```/, '').replace(/```$/, '').trim();
+    
+    // Czyszczenie formatowania markdown jeśli istnieje
+    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-    res.json(JSON.parse(rawText));
+    const parsedJson = JSON.parse(rawText);
+    res.json(parsedJson);
   } catch (err) {
-    res.status(500).json({ error: 'Błąd AI.' });
+    console.error('Szczegóły błędu AI:', err);
+    res.status(500).json({ error: 'Błąd AI podczas generowania opisu: ' + err.message });
   }
 });
 
