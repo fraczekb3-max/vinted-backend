@@ -14,7 +14,6 @@ app.post('/api/generate', async (req, res) => {
   const { platform, images, promptCorrection } = req.body;
 
   try {
-    // Używamy bezpiecznej, uniwersalnej nazwy modelu zgodnej z każdą wersją SDK
     const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
     let response;
 
