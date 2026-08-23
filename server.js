@@ -23,16 +23,7 @@ app.post('/api/generate', async (req, res) => {
       : `Użytkownik nie podał ceny – musisz ją sam wycenić.`;
 
     if (promptCorrection) {
-      const prompt = `Jesteś profesjonalnym copywriterem i ekspertem ds. wyceny e-commerce. 
-      Platforma: ${targetPlatform}.
-      ${promptCorrection}
-      
-      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu ```json). Obiekt musi zawierać dokładnie cztery pola:
-      1. "title" (tytuł ogłoszenia)
-      2. "description" (opis z hashtagami)
-      3. "suggestedPrice" (normalna, rynkowa cena, np. "50 PLN")
-      4. "quickSalePrice" (niższa cena do szybkiej sprzedaży, np. "35 PLN")
-      5. "priceFeedback" (krótki komentarz AI do ceny, np. informacja czy cena wpisana przez użytkownika jest OK, czy za wysoka i dlaczego)`;
+      const prompt = `Jesteś profesjonalnym copywriterem i ekspertem ds. wyceny e-commerce. Platforma: ${targetPlatform}. ${promptCorrection} Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json). Obiekt musi zawierać dokładnie pięć pól: "title", "description", "suggestedPrice", "quickSalePrice", "priceFeedback".`;
 
       response = await model.generateContent(prompt);
     } else {
@@ -44,14 +35,7 @@ app.post('/api/generate', async (req, res) => {
         inlineData: { data: img.base64, mimeType: img.mimeType }
       }));
 
-      const prompt = `Przeanalizuj załączone zdjęcia przedmiotu dla platformy ${targetPlatform}.${userPriceInfo}
-      
-      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu ```json), zawierający dokładnie pięć pól:
-      - "title": krótki, atrakcyjny tytuł
-      - "description": profesjonalny opis ze stanem przedmiotu i hashtagami
-      - "suggestedPrice": normalna, rynkowa cena (np. "60 PLN")
-      - "quickSalePrice": cena do szybkiej sprzedaży (nieco niższa, żeby poszło od ręki, np. "45 PLN")
-      - "priceFeedback": jeśli użytkownik podał cenę, oceń ją (np. "Twoja cena jest za wysoka jak na ten stan, rynkowo wart jest max 50 PLN"). Jeśli użytkownik nic nie podał, napisz np. "Oto optymalna wycena rynkowa."`;
+      const prompt = `Przeanalizuj załączone zdjęcia przedmiotu dla platformy ${targetPlatform}. ${userPriceInfo} Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json), zawierający dokładnie pięć pól: "title" (krótki, atrakcyjny tytuł), "description" (profesjonalny opis ze stanem i hashtagami), "suggestedPrice" (normalna cena rynkowa, np. "60 PLN"), "quickSalePrice" (niższa cena do szybkiej sprzedaży, np. "45 PLN"), "priceFeedback" (komentarz do ceny użytkownika lub informacja o wycenie).`;
 
       response = await model.generateContent([prompt, ...imageParts]);
     }
@@ -79,5 +63,5 @@ app.post('/api/generate', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Serwer API uruchomiony na porcie ${PORT}`));
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Serwer działa na porcie ${PORT}`));
