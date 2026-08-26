@@ -43,8 +43,8 @@ app.post('/api/generate', async (req, res) => {
       contents = [{ parts: parts }];
     }
 
-    // Używamy modelu gemini-1.5-pro, który bez problemu przetwarza obrazy w v1beta
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`, {
+    // Używamy uniwersalnego endpointu gemini-1.5-flash-latest
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents })
