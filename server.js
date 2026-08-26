@@ -8,60 +8,6 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const GEMINI_API_KEY = 'AQ.Ab8RN6LPZvZpFue7nwSHHX5HlJxMfdPpx9mm-zBc1ZHwqeovkQ';
 
-// Używamy sprawdzonych i w pełni wspieranych wersji modeli do obsługi obrazów
-const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-async function callGeminiWithRetry(contents) {
-  let lastError = null;
-
-  for (const model of MODELS) {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents })
-        });
-
-        const data = await apiResponse.json();
-
-        if (!apiResponse.ok || data.error) {
-          const errorMsg = data.error ? data.error.message : 'Błąd API Google';
-          const isOverloaded = errorMsg.toLowerCase().includes('demand') || 
-                               errorMsg.toLowerCase().includes('overloaded') || 
-                               errorMsg.toLowerCase().includes('rate') ||
-                               apiResponse.status === 429;
-
-          if (isOverloaded && attempt < 3) {
-            console.warn(`Model ${model} przeciążony (próba ${attempt}/3). Ponawiam...`);
-            await sleep(attempt * 1500);
-            continue;
-          } else {
-            // Jeśli to błąd "not found", wyrzucamy go od razu, żeby od razu przeskoczyć na kolejny model z tablicy MODELS
-            throw new Error(errorMsg);
-          }
-        }
-
-        return data;
-
-      } catch (err) {
-        lastError = err;
-        // Jeśli model nie istnieje lub wyczerpał próby, idziemy do następnego modelu w pętli
-        if (err.message.includes('not found') || attempt === 3) {
-          console.warn(`Pominięcie modelu ${model} z powodu błędu: ${err.message}`);
-          break; 
-        } else {
-          await sleep(1000);
-        }
-      }
-    }
-  }
-
-  throw lastError || new Error('Wszystkie modele AI są obecnie niedostępne.');
-}
-
 app.post('/api/generate', async (req, res) => {
   const { platform, images, promptCorrection } = req.body;
 
@@ -97,7 +43,18 @@ app.post('/api/generate', async (req, res) => {
       contents = [{ parts: parts }];
     }
 
-    const data = await callGeminiWithRetry(contents);
+    // Używamy modelu gemini-1.5-pro, który bez problemu przetwarza obrazy w v1beta
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents })
+    });
+
+    const data = await apiResponse.json();
+
+    if (!apiResponse.ok || data.error) {
+      throw new Error(data.error ? data.error.message : 'Błąd API Google');
+    }
 
     let rawText = data.candidates[0].content.parts[0].text.trim();
     rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
