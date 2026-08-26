@@ -8,17 +8,15 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const GEMINI_API_KEY = 'AQ.Ab8RN6LPZvZpFue7nwSHHX5HlJxMfdPpx9mm-zBc1ZHwqeovkQ';
 
-// Lista modeli do prób: najpierw główny, potem zapasowy (fallback)
-const MODELS = ['gemini-3.5-flash', 'gemini-1.5-flash'];
+// Używamy sprawdzonych i w pełni wspieranych wersji modeli do obsługi obrazów
+const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
 
-// Pomocnicza funkcja opóźnienia
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function callGeminiWithRetry(contents) {
   let lastError = null;
 
   for (const model of MODELS) {
-    // Dla każdego modelu wykonujemy do 3 prób z krótką przerwą
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
@@ -31,30 +29,29 @@ async function callGeminiWithRetry(contents) {
 
         if (!apiResponse.ok || data.error) {
           const errorMsg = data.error ? data.error.message : 'Błąd API Google';
-          // Sprawdzamy czy to błąd przeciążenia (high demand / overloaded / 429)
           const isOverloaded = errorMsg.toLowerCase().includes('demand') || 
                                errorMsg.toLowerCase().includes('overloaded') || 
                                errorMsg.toLowerCase().includes('rate') ||
                                apiResponse.status === 429;
 
           if (isOverloaded && attempt < 3) {
-            // Jeśli przeciążenie, czekamy chwilę (np. 1.5s, potem 3s) i ponawiamy próbę na tym samym modelu
-            console.warn(`Model ${model} przeciążony (próba ${attempt}/3). Ponawianie za chwilę...`);
+            console.warn(`Model ${model} przeciążony (próba ${attempt}/3). Ponawiam...`);
             await sleep(attempt * 1500);
             continue;
           } else {
+            // Jeśli to błąd "not found", wyrzucamy go od razu, żeby od razu przeskoczyć na kolejny model z tablicy MODELS
             throw new Error(errorMsg);
           }
         }
 
-        // Jeśli sukces, zwracamy dane
         return data;
 
       } catch (err) {
         lastError = err;
-        // Jeśli błąd dotyczy sieci lub limitów, przerywamy pętle prób dla tego modelu i idziemy do zapasowego modelu
-        if (attempt === 3) {
-          console.warn(`Model ${model} wyczerpał próby. Przełączam na kolejny model...`);
+        // Jeśli model nie istnieje lub wyczerpał próby, idziemy do następnego modelu w pętli
+        if (err.message.includes('not found') || attempt === 3) {
+          console.warn(`Pominięcie modelu ${model} z powodu błędu: ${err.message}`);
+          break; 
         } else {
           await sleep(1000);
         }
@@ -100,7 +97,6 @@ app.post('/api/generate', async (req, res) => {
       contents = [{ parts: parts }];
     }
 
-    // Wywołanie z automatycznym retry i zmianą modeli
     const data = await callGeminiWithRetry(contents);
 
     let rawText = data.candidates[0].content.parts[0].text.trim();
