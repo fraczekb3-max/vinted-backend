@@ -16,18 +16,19 @@ app.post('/api/generate', async (req, res) => {
     let contents = [];
 
     if (promptCorrection) {
-      const promptText = `Jesteś profesjonalnym copywriterem i ekspertem ds. wyceny e-commerce. Platforma: ${targetPlatform}. ${promptCorrection} Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json). Obiekt musi zawierać dokładnie cztery pola: "title", "description", "suggestedPrice", "quickSalePrice".`;
+      const promptText = `Jesteś niezwykle precyzyjnym ekspertem ds. wyceny e-commerce i copywritingu. Platforma: ${targetPlatform}. ${promptCorrection} Zwróć szczególną uwagę na rzetelność cenową – unikaj błędów w wycenach i dokładnie opisz przedmiot. Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json). Obiekt musi zawierać dokładnie cztery pola: "title", "description", "suggestedPrice", "quickSalePrice".`;
       contents = [{ parts: [{ text: promptText }] }];
     } else {
       if (!images || images.length === 0) {
         return res.status(400).json({ error: 'Nie wybrano żadnych zdjęć przedmiotu.' });
       }
 
-      const promptText = `Przeanalizuj załączone zdjęcia przedmiotu dla platformy ${targetPlatform}. Oceń jego stan i rynkową wartość. Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json), zawierający dokładnie cztery pola: 
-      - "title": krótki, atrakcyjny tytuł ogłoszenia
-      - "description": profesjonalny opis ze stanem przedmiotu i hashtagami
-      - "suggestedPrice": normalna, rynkowa cena (np. "60 PLN")
-      - "quickSalePrice": niższa cena do szybkiej sprzedaży (np. "45 PLN")`;
+      const promptText = `Przeanalizuj niezwykle dokładnie załączone zdjęcia przedmiotu dla platformy ${targetPlatform}. Masz obowiązek solidnie zweryfikować rynkową wartość przedmiotu, aby wyeliminować jakiekolwiek błędy cenowe. Sprawdź jego stan, markę, model i realną wartość w internecie. Opisz go w pełni profesjonalnie. 
+      Zwróć wynik WYŁĄCZNIE jako czysty obiekt JSON (bez znaczników markdown typu json), zawierający dokładnie cztery pola: 
+      - "title": krótki, chwytliwy tytuł ogłoszenia
+      - "description": dokładny, rzetelny opis ze stanem przedmiotu i hashtagami
+      - "suggestedPrice": sprawdzona, uczciwa cena rynkowa (np. "60 PLN")
+      - "quickSalePrice": cena gwarantująca błyskawiczną sprzedaż (np. "45 PLN")`;
 
       const parts = [{ text: promptText }];
       
@@ -43,7 +44,8 @@ app.post('/api/generate', async (req, res) => {
       contents = [{ parts: parts }];
     }
 
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    // Sprawdzony, klasyczny model
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents })
