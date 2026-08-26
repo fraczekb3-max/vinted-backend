@@ -43,8 +43,8 @@ app.post('/api/generate', async (req, res) => {
       contents = [{ parts: parts }];
     }
 
-    // Używamy uniwersalnego endpointu gemini-1.5-flash-latest
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+    // Używamy stabilnego endpointu v1 i poprawnego modelu gemini-1.5-flash
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents })
