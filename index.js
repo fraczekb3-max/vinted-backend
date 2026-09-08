@@ -37,9 +37,6 @@ app.get('/api/packs', (req, res) => {
 
 // Rejestracja komendy /dodaj
 const commands = [
-    new SlashCommandBuilder.CommandBuilder ? new SlashCommandBuilder()
-        .setName('dodaj')
-        .setDescription('Dodaj nowy texture pack (autor, serwer, wersja, opis, zdjęcie i Mediafire)') : 
     new SlashCommandBuilder()
         .setName('dodaj')
         .setDescription('Dodaj nowy texture pack przez formularz')
@@ -115,7 +112,7 @@ client.on('interactionCreate', async (interaction) => {
             .setCustomId('image')
             .setLabel('Link do zdjęcia (URL)')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('https://... (np. z Discorda lubimgur)')
+            .setPlaceholder('https://...')
             .setRequired(true);
 
         const linkInput = new TextInputBuilder()
@@ -166,7 +163,7 @@ client.on('interactionCreate', async (interaction) => {
 
         // Tworzenie ładnego Embeda z przyciskiem do Mediafire
         const embed = new EmbedBuilder()
-            .setColor(0x9370DB) // Fioletowy motyw
+            .setColor(0x9370DB)
             .setTitle(`📦 Nowy Texture Pack: ${title}`)
             .setDescription(desc)
             .addFields(
@@ -186,12 +183,11 @@ client.on('interactionCreate', async (interaction) => {
                 .setURL(link)
         );
 
-        // Odpowiedź na Discordzie z embedem i przyciskiem
         await interaction.reply({ 
             content: `✅ Paczka **${title}** została pomyślnie dodana do bazy i na stronę!`, 
             embeds: [embed],
             components: [row],
-            ephemeral: false // Zmień na true, jeśli chcesz, żeby widział to tylko Ty
+            ephemeral: false 
         });
     }
 });
