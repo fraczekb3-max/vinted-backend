@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xenon TxT - Minecraft Texture Packs</title>
+  
+  <style>
+    /* Reset i podstawowe style */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif !important;
+      user-select: none;
+    }
+
+    body {
+      background-color: #0b0b0e;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* TŁO CANVAS POD MGŁĘ */
+    #trail-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav, .section, footer, .modal-overlay, .lightbox-overlay {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Nawigacja */
+    nav {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 25px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 18px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s, background 0.2s;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 12px;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Sekcje strony */
+    .section {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 25px 60px 25px;
+    }
+
+    .section.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      text-align: center;
+      padding: 80px 20px 60px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      color: #ffffff;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #c084fc, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .hero p {
+      color: #9ca3af;
+      max-width: 650px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: #ffffff !important;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 25px rgba(139, 92, 246, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(139, 92, 246, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e5e7eb;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Pasek Serwerów */
+    .servers-bar {
+      margin-top: 80px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 35px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .server-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #71717a;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .server-item:hover {
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .server-item img {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* KATEGORIE */
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 35px;
+      gap: 15px;
+    }
+
+    .grid-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 18px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #8b5cf6;
+    }
+
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .folder-card {
+      background: rgba(18, 18, 23, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .folder-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .folder-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      object-fit: cover;
+      margin-bottom: 18px;
+    }
+
+    .folder-card h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .folder-card p {
+      font-size: 0.85rem;
+      color: #71717a;
+    }
+
+    /* BANER SERWERA */
+    .top-bar-large {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .server-hero-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(139, 92, 246, 0.08));
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .server-hero-info h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .server-ip-large {
+      font-size: 1.1rem;
+      color: #a1a1aa;
+    }
+
+    .server-ip-large strong {
+      color: #a855f7;
+      font-size: 1.25rem;
+      margin-left: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .action-btns-large {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-action-lg {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-action-lg:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .btn-action-lg.purple {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-action-lg.purple:hover {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    }
+
+    /* PACZKI GRID */
+    .pack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .pack-card {
+      background: rgba(18, 18, 23, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pack-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .pack-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .pack-card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .pack-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .pack-badge {
+      align-self: flex-start;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      background: rgba(139, 92, 246, 0.15);
+      color: #c084fc;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .pack-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    /* MODAL PODGLĄDU */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: #121217;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      width: 92%;
+      max-width: 650px;
+      padding: 30px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      transform: translateY(60px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: #9ca3af;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .modal h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
+    .modal-img-container {
+      width: 100%;
+      height: 240px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      cursor: zoom-in;
+    }
+
+    .modal-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .modal-img-container:hover img {
+      transform: scale(1.03);
+    }
+
+    .modal-img-hint {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      border-radius: 14px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-label {
+      font-size: 0.75rem;
+      color: #71717a;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-size: 0.95rem;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+
+    .modal-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .modal-tag {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      background: rgba(139, 92, 246, 0.2);
+      color: #c084fc;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .modal p {
+      font-size: 0.92rem;
+      color: #9ca3af;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    /* PEŁNOEKRANOWA GALERIA ZDJĘĆ */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(15px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lightbox-overlay.active .lightbox-img {
+      transform: scale(1);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      color: #52525b;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="trail-canvas"></canvas>
+
+  <nav>
+    <div class="logo" onclick="showSection('home-section')">
+      <div class="logo-icon">X</div>
+      <span>Xenon TxT</span>
+    </div>
+
+    <div class="nav-links">
+      <a id="nav-home" class="active" onclick="showSection('home-section')">Strona Główna</a>
+      <a id="nav-categories" onclick="showSection('categories-section')">Kategorie</a>
+      <a href="https://discord.com/" target="_blank">Kontakt</a>
+    </div>
+  </nav>
+
+  <!-- STRONA GŁÓWNA -->
+  <div class="section active" id="home-section">
+    <div class="hero">
+      <h1 class="hero-title">
+        Znajdź <span class="highlight">Idealne TXT</span> Dla Siebie
+      </h1>
+      <p>
+        Wybieraj z najlepszych, w pełni zoptymalizowanych paczek zasobów. Zwiększ swoje FPS-y, popraw widoczność w walce i zyskaj przewagę na każdym serwerze!
+      </p>
+      <div class="hero-buttons">
+        <button class="btn-primary" onclick="showSection('categories-section')">Przeglądaj Paczki</button>
+      </div>
+    </div>
+
+    <div class="servers-bar">
+      <div class="server-item" onclick="showSection('anarchia-section')">
+        <img src="https://i.imgur.com/G9ru8n0.png" alt="Anarchia">
+        <span>Anarchia GG</span>
+      </div>
+      <div class="server-item" onclick="showSection('minestar-section')">
+        <img src="https://i.imgur.com/gcE2omD.jpeg" alt="Minestar">
+        <span>Minestar GG</span>
+      </div>
+      <div class="server-item" onclick="showSection('inne-section')">
+        <span style="font-size: 1.2rem;">📂</span>
+        <span>Pozostałe TxT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KATEGORIE -->
+  <div class="section" id="categories-section">
+    <div class="section-header">
+      <h2 class="grid-title">Wybierz Kategorię</h2>
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Szukaj paczki lub serwera..." onkeyup="filterPacks()">
+    </div>
+
+    <div class="folder-grid">
+      <div class="folder-card" onclick="showSection('anarchia-section')">
+        <img src="https://i.imgur.com/G9ru8n0.png" alt="Anarchia.GG">
+        <h2>Anarchia.GG</h2>
+        <p>Resource packi zoptymalizowane pod tryb Anarchia</p>
+      </div>
+
+      <div class="folder-card" onclick="showSection('minestar-section')">
+        <img src="https://i.imgur.com/gcE2omD.jpeg" alt="Minestar.GG">
+        <h2>Minestar.GG</h2>
+        <p>Paczki dopasowane pod rozgrywkę na Minestar</p>
+      </div>
+
+      <div class="folder-card" onclick="showSection('inne-section')">
+        <div style="font-size: 3rem; margin-bottom: 18px;">📂</div>
+        <h2>Inne</h2>
+        <p>Ogólne paczki PvP, FPS Boost i klasyczne</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PODKATEGORIA: ANARCHIA.GG -->
+  <div class="section" id="anarchia-section">
+    <div class="top-bar-large">
+      <button class="btn-secondary" onclick="showSection('categories-section')">← Powrót</button>
+    </div>
+
+    <div class="server-hero-card">
+      <div class="server-hero-info">
+        <h2>Anarchia.GG</h2>
+        <div class="server-ip-large">
+          Oficjalny Adres IP: <strong>ANARCHIA.GG</strong>
+        </div>
+      </div>
+      <div class="action-btns-large">
+        <button class="btn-action-lg purple" onclick="copyIP('ANARCHIA.GG', this)">📋 Kopiuj IP</button>
+        <a href="https://anarchia.gg/" target="_blank" class="btn-action-lg">🛒 Sklep</a>
+        <a href="https://discord.com/" target="_blank" class="btn-action-lg">💬 Discord</a>
+      </div>
+    </div>
+
+    <div class="pack-grid" id="anarchia-grid">
+      <!-- Generowane dynamicznie -->
+    </div>
+  </div>
+
+  <!-- PODKATEGORIA: MINESTAR.GG -->
+  <div class="section" id="minestar-section">
+    <div class="top-bar-large">
+      <button class="btn-secondary" onclick="showSection('categories-section')">← Powrót</button>
+    </div>
+
+    <div class="server-hero-card">
+      <div class="server-hero-info">
+        <h2>Minestar.GG</h2>
+        <div class="server-ip-large">
+          Oficjalny Adres IP: <strong>Minestar.gg</strong>
+        </div>
+      </div>
+      <div class="action-btns-large">
+        <button class="btn-action-lg purple" onclick="copyIP('Minestar.gg', this)">📋 Kopiuj IP</button>
+        <a href="https://minestar.gg/" target="_blank" class="btn-action-lg">🛒 Sklep</a>
+        <a href="https://discord.com/" target="_blank" class="btn-action-lg">💬 Discord</a>
+      </div>
+    </div>
+
+    <div class="pack-grid" id="minestar-grid">
+      <!-- Generowane dynamicznie -->
+    </div>
+  </div>
+
+  <!-- PODKATEGORIA: INNE -->
+  <div class="section" id="inne-section">
+    <div class="top-bar-large">
+      <button class="btn-secondary" onclick="showSection('categories-section')">← Powrót</button>
+    </div>
+
+    <div class="server-hero-card">
+      <div class="server-hero-info">
+        <h2>Pozostałe Paczki</h2>
+        <div class="server-ip-large">
+          Uniwersalne paczki tekstur dla każdego trybu
+        </div>
+      </div>
+    </div>
+
+    <div class="pack-grid" id="inne-grid">
+      <!-- Generowane dynamicznie -->
+    </div>
+  </div>
+
+  <!-- MODAL PODGLĄDU -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3 id="modalTitle">Nazwa Paczki</h3>
+      <div class="modal-img-container" onclick="openLightbox()">
+        <img id="modalImg" src="" alt="Podgląd">
+        <div class="modal-img-hint">🔍 Kliknij, aby powiększyć</div>
+      </div>
+      <div class="modal-details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Autor</span>
+          <span class="detail-value" id="modalAuthor">-</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Dedykowany Serwer</span>
+          <span class="detail-value" id="modalServer">-</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Wersja Minecraft</span>
+          <span class="detail-value" id="modalVersion">-</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Tagi</span>
+          <div class="modal-tags" id="modalTags"></div>
+        </div>
+      </div>
+      <p id="modalDesc">Opis paczki...</p>
+      <a id="modalDownload" href="#" target="_blank" class="btn-primary" style="display: block; text-align: center; text-decoration: none;">Pobierz Paczkę (.ZIP)</a>
+    </div>
+  </div>
+
+  <!-- PEŁNOEKRANOWY PODGLĄD ZDJĘCIA -->
+  <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightboxImg" class="lightbox-img" src="" alt="Powiększone zdjęcie" onclick="event.stopPropagation()">
+  </div>
+
+  <footer>
+    <p>© 2026 Xenon TxT. Wszystkie prawa zastrzeżone.</p>
+  </footer>
+
+  <script>
+    /* BAZA PACZEK (Tu bot lub Ty możecie łatwo dodawać nowe pozycje) */
+    let packsData = [
+      {
+        id: 'anarchia-dark',
+        category: 'anarchia',
+        title: 'Anarchia Dark',
+        badge: '16x16 | PvP',
+        img: 'https://i.imgur.com/G9ru8n0.png',
+        desc: 'Zoptymalizowana paczka stworzona do szybkich i wymagających walk na Anarchia.GG. Posiada ciemniejsze GUI, mocno obniżone miecze dla lepszej widoczności oraz wyczyszczony ogień.',
+        author: 'LX Studio',
+        tags: '16x16, PvP, Dark GUI',
+        server: 'Anarchia.GG',
+        version: '1.16 - 1.21',
+        downloadUrl: 'https://example.com/download'
+      },
+      {
+        id: 'crystal-fps',
+        category: 'anarchia',
+        title: 'Crystal FPS',
+        badge: 'FPS Boost',
+        img: 'https://i.imgur.com/G9ru8n0.png',
+        desc: 'Lekka paczka ukierunkowana na płynność i maksymalizację klatek na sekundę (FPS) podczas walki na kryształy i totemy.',
+        author: 'Xenon Dev',
+        tags: 'FPS Boost, Crystal, Low Poly',
+        server: 'Anarchia.GG',
+        version: '1.18 - 1.21',
+        downloadUrl: 'https://example.com/download'
+      },
+      {
+        id: 'minestar-pvp',
+        category: 'minestar',
+        title: 'Minestar PvP',
+        badge: 'Custom GUI',
+        img: 'https://i.imgur.com/gcE2omD.jpeg',
+        desc: 'Paczka ze skróconymi mieczami, wyraźną celownicą oraz unikalnym motywem kolorystycznym dopasowanym do serwera Minestar.',
+        author: 'LX Studio',
+        tags: 'Custom GUI, PvP Edit',
+        server: 'Minestar.GG',
+        version: '1.16 - 1.21',
+        downloadUrl: 'https://example.com/download'
+      },
+      {
+        id: 'bare-bones',
+        category: 'inne',
+        title: 'Bare Bones',
+        badge: 'Trailer Style',
+        img: 'https://picsum.photos/600/400?random=30',
+        desc: 'Paczka nadająca grze wygląd znany ze zwiastunów gry Minecraft! Proste, czyste i bardzo estetyczne tekstury.',
+        author: 'RobotPanda',
+        tags: 'Trailer Style, Clean, Default 16x',
+        server: 'Ogólny',
+        version: '1.8 - 1.21',
+        downloadUrl: 'https://example.com/download'
+      }
+    ];
+
+    // Funkcja renderująca paczki do odpowiednich kategorii
+    function renderPacks() {
+      const anarchiaGrid = document.getElementById('anarchia-grid');
+      const minestarGrid = document.getElementById('minestar-grid');
+      const inneGrid = document.getElementById('inne-grid');
+
+      anarchiaGrid.innerHTML = '';
+      minestarGrid.innerHTML = '';
+      inneGrid.innerHTML = '';
+
+      packsData.forEach(pack => {
+        const cardHTML = `
+          <div class="pack-card" data-title="${pack.title.toLowerCase()} ${pack.tags.toLowerCase()}">
+            <img src="${pack.img}" alt="${pack.title}" onclick="openModalById('${pack.id}')">
+            <div class="pack-card-body">
+              <span class="pack-badge">${pack.badge}</span>
+              <h3>${pack.title}</h3>
+              <div class="pack-card-actions">
+                <button class="btn-secondary" style="flex: 1;" onclick="openModalById('${pack.id}')">Podgląd</button>
+                <a href="${pack.downloadUrl}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px;">Pobierz</a>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (pack.category === 'anarchia') anarchiaGrid.innerHTML += cardHTML;
+        else if (pack.category === 'minestar') minestarGrid.innerHTML += cardHTML;
+        else if (pack.category === 'inne') inneGrid.innerHTML += cardHTML;
+      });
+    }
+
+    function openModalById(id) {
+      const pack = packsData.find(p => p.id === id);
+      if (!pack) return;
+      openModal(pack.title, pack.img, pack.desc, pack.author, pack.tags, pack.server, pack.version, pack.downloadUrl);
+    }
+
+    // Uruchomienie renderowania przy starcie
+    renderPacks();
+
+    /* SKRYPT FIOLETOWEJ MGIEŁKI KURSORA */
+    const canvas = document.getElementById('trail-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const maxParticles = 40;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 45 + 35;
+        this.alpha = 0.35;
+        this.color = { r: 139, g: 92, b: 246 };
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = (Math.random() - 0.5) * 0.6;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= 0.009;
+        if (this.size > 2) this.size -= 0.3;
+      }
+      draw() {
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`);
+        gradient.addColorStop(0.6, `rgba(99, 102, 241, ${this.alpha * 0.4})`);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      for (let i = 0; i < 2; i++) {
+        particles.push(new Particle(e.clientX + (Math.random() - 0.5) * 10, e.clientY + (Math.random() - 0.5) * 10));
+      }
+      if (particles.length > maxParticles) particles.shift();
+    });
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].alpha <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* OGÓLNA LOGIKA INTERFEJSU */
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      document.getElementById('nav-home').classList.remove('active');
+      document.getElementById('nav-categories').classList.remove('active');
+
+      if (sectionId === 'home-section') document.getElementById('nav-home').classList.add('active');
+      else document.getElementById('nav-categories').classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function copyIP(ipText, btnElement) {
+      navigator.clipboard.writeText(ipText).then(() => {
+        const originalText = btnElement.innerText;
+        btnElement.innerText = '✔ Skopiowano!';
+        setTimeout(() => { btnElement.innerText = originalText; }, 2000);
+      });
+    }
+
+    function filterPacks() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const packs = document.querySelectorAll('.pack-card');
+      packs.forEach(pack => {
+        const title = pack.getAttribute('data-title');
+        if (title.includes(query)) {
+          pack.style.display = 'flex';
+        } else {
+          pack.style.display = 'none';
+        }
+      });
+    }
+
+    function openModal(title, imgSrc, description, author, tagsString, server, version, downloadUrl) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalImg').src = imgSrc;
+      document.getElementById('modalDesc').innerText = description;
+      document.getElementById('modalAuthor').innerText = author;
+      document.getElementById('modalServer').innerText = server;
+      document.getElementById('modalVersion').innerText = version;
+      document.getElementById('modalDownload').href = downloadUrl;
+
+      const tagsContainer = document.getElementById('modalTags');
+      tagsContainer.innerHTML = '';
+      tagsString.split(',').forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'modal-tag';
+        span.innerText = tag.trim();
+        tagsContainer.appendChild(span);
+      });
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function openLightbox() {
+      const currentSrc = document.getElementById('modalImg').src;
+      document.getElementById('lightboxImg').src = currentSrc;
+      document.getElementById('lightboxOverlay').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxOverlay').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
