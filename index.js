@@ -57,22 +57,10 @@ client.on('ready', async () => {
     }
 });
 
-// Obsługa komendy i formularza
+// Obsługa komendy i formularza (bez restrykcji ról, żeby działało od razu)
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isChatInputCommand() && interaction.commandName === 'dodaj') {
         try {
-            const memberRoles = interaction.member.roles.cache || interaction.member.roles;
-            const hasRole = typeof memberRoles.has === 'function' 
-                ? memberRoles.has(process.env.DISCORD_ROLE_ID_TXT) 
-                : memberRoles.includes(process.env.DISCORD_ROLE_ID_TXT);
-            
-            if (!hasRole) {
-                return interaction.reply({ 
-                    content: '❌ Nie posiadasz rangi **txt**, aby dodawać paczki!', 
-                    ephemeral: true 
-                });
-            }
-
             const modal = new ModalBuilder()
                 .setCustomId('txt_modal')
                 .setTitle('Dodaj Texture Pack (Xenon TxT)');
