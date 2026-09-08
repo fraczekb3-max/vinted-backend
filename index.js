@@ -1,7 +1,66 @@
+const { 
+    Client, 
+    GatewayIntentBits, 
+    ActionRowBuilder, 
+    ModalBuilder, 
+    TextInputBuilder, 
+    TextInputStyle, 
+    SlashCommandBuilder, 
+    REST, 
+    Routes,
+    EmbedBuilder,
+    ButtonBuilder,
+    ButtonStyle
+} = require('discord.js');
+const express = require('express');
+const path = require('path');
+
+const app = express();
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMembers
+    ]
+});
+
+// Pamięć na dodane paczki (widoczna na stronie WWW)
+const texturePacks = [];
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Endpoint dla strony WWW
+app.get('/api/packs', (req, res) => {
+    res.json(texturePacks);
+});
+
+// Rejestracja komendy /dodaj
+const commands = [
+    new SlashCommandBuilder()
+        .setName('dodaj')
+        .setDescription('Dodaj nowy texture pack przez formularz')
+];
+
+client.on('ready', async () => {
+    console.log(`Bot zalogowany jako ${client.user.tag}`);
+    
+    try {
+        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN);
+        await rest.put(
+            Routes.applicationGuildCommands(client.user.id, process.env.DISCORD_GUILD_ID),
+            { body: commands }
+        );
+        console.log('Pomyślnie zarejestrowano komendę /dodaj!');
+    } catch (err) {
+        console.error('Błąd rejestracji komendy:', err);
+    }
+});
+
+// Obsługa komendy i formularza
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isChatInputCommand() && interaction.commandName === 'dodaj') {
         try {
-            // Bezpieczne sprawdzenie ról (działa zarówno dla cache, jak i dla tablicy ID)
             const memberRoles = interaction.member.roles.cache || interaction.member.roles;
             const hasRole = typeof memberRoles.has === 'function' 
                 ? memberRoles.has(process.env.DISCORD_ROLE_ID_TXT) 
@@ -140,3 +199,8 @@ client.on('interactionCreate', async (interaction) => {
         });
     }
 });
+
+client.login(process.env.DISCORD_BOT_TOKEN);
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Serwer i Bot działają na porcie ${PORT}`));
