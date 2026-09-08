@@ -1,12 +1,13 @@
 {
   "name": "xenon-txt-bot",
   "version": "1.0.0",
-  "description": "Xenon TxT Bot & Backend",
+  "description": "Xenon TxT Backend",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "discord.js": "^14.14.0"
+    "discord.js": "^14.14.0",
+    "express": "^4.19.2"
   }
 }
