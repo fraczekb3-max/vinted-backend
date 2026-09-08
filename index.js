@@ -7,7 +7,10 @@ const {
     TextInputStyle, 
     SlashCommandBuilder, 
     REST, 
-    Routes 
+    Routes,
+    EmbedBuilder,
+    ButtonBuilder,
+    ButtonStyle
 } = require('discord.js');
 const express = require('express');
 const path = require('path');
@@ -21,22 +24,25 @@ const client = new Client({
     ]
 });
 
-// Pamięć na dodane paczki (widoczna na stronie)
+// Pamięć na dodane paczki (widoczna na stronie WWW)
 const texturePacks = [];
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint dostarczający listę paczek na stronę WWW
+// Endpoint dla strony WWW
 app.get('/api/packs', (req, res) => {
     res.json(texturePacks);
 });
 
-// Rejestracja komendy /dodaj w Discordzie
+// Rejestracja komendy /dodaj
 const commands = [
+    new SlashCommandBuilder.CommandBuilder ? new SlashCommandBuilder()
+        .setName('dodaj')
+        .setDescription('Dodaj nowy texture pack (autor, serwer, wersja, opis, zdjęcie i Mediafire)') : 
     new SlashCommandBuilder()
         .setName('dodaj')
-        .setDescription('Otwiera formularz dodawania nowej paczki texture pack')
+        .setDescription('Dodaj nowy texture pack przez formularz')
 ];
 
 client.on('ready', async () => {
@@ -54,7 +60,7 @@ client.on('ready', async () => {
     }
 });
 
-// Obsługa komendy /dodaj oraz wysłanego formularza (Modal)
+// Obsługa komendy i formularza
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isChatInputCommand() && interaction.commandName === 'dodaj') {
         const hasRole = interaction.member.roles.cache.has(process.env.DISCORD_ROLE_ID_TXT);
@@ -68,7 +74,7 @@ client.on('interactionCreate', async (interaction) => {
 
         const modal = new ModalBuilder()
             .setCustomId('txt_modal')
-            .setTitle('Dodaj Texture Pack');
+            .setTitle('Dodaj Texture Pack (Xenon TxT)');
 
         const titleInput = new TextInputBuilder()
             .setCustomId('title')
@@ -81,28 +87,42 @@ client.on('interactionCreate', async (interaction) => {
             .setCustomId('server')
             .setLabel('Serwer / Kategoria')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('Anarchia.GG / MineSerwer / Inny')
+            .setPlaceholder('np. Anarchia.GG')
             .setRequired(true);
 
         const modeInput = new TextInputBuilder()
             .setCustomId('mode')
-            .setLabel('Tryb gry')
+            .setLabel('Tryb gry / Rip')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('BoxPvP / SkyPvP / Anarchia / Inny')
+            .setPlaceholder('np. BoxPvP / Custom')
             .setRequired(true);
 
         const versionInput = new TextInputBuilder()
             .setCustomId('version')
             .setLabel('Wersja Minecraft')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('np. 1.8.9 lub 1.16 - 1.21')
+            .setPlaceholder('np. 1.8.9 / 1.16 - 1.21')
+            .setRequired(true);
+
+        const descInput = new TextInputBuilder()
+            .setCustomId('desc')
+            .setLabel('Krótki opis paczki')
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder('Napisz coś o paczce...')
+            .setRequired(true);
+
+        const imageInput = new TextInputBuilder()
+            .setCustomId('image')
+            .setLabel('Link do zdjęcia (URL)')
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder('https://... (np. z Discorda lubimgur)')
             .setRequired(true);
 
         const linkInput = new TextInputBuilder()
             .setCustomId('link')
-            .setLabel('Link do pobrania (MediaFire / GDrive)')
+            .setLabel('Link do pobrania (Mediafire)')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('https://...')
+            .setPlaceholder('https://www.mediafire.com/file/...')
             .setRequired(true);
 
         modal.addComponents(
@@ -110,6 +130,8 @@ client.on('interactionCreate', async (interaction) => {
             new ActionRowBuilder().addComponents(serverInput),
             new ActionRowBuilder().addComponents(modeInput),
             new ActionRowBuilder().addComponents(versionInput),
+            new ActionRowBuilder().addComponents(descInput),
+            new ActionRowBuilder().addComponents(imageInput),
             new ActionRowBuilder().addComponents(linkInput)
         );
 
@@ -121,25 +143,55 @@ client.on('interactionCreate', async (interaction) => {
         const server = interaction.fields.getTextInputValue('server');
         const mode = interaction.fields.getTextInputValue('mode');
         const version = interaction.fields.getTextInputValue('version');
+        const desc = interaction.fields.getTextInputValue('desc');
+        const image = interaction.fields.getTextInputValue('image');
         const link = interaction.fields.getTextInputValue('link');
 
         const authorName = interaction.user.username;
         const authorAvatar = interaction.user.displayAvatarURL();
 
+        // Zapis do tablicy dla strony WWW
         texturePacks.push({
             title,
             server,
             mode,
             version,
+            desc,
+            image,
             link,
             authorName,
             authorAvatar,
             date: new Date().toLocaleDateString('pl-PL')
         });
 
+        // Tworzenie ładnego Embeda z przyciskiem do Mediafire
+        const embed = new EmbedBuilder()
+            .setColor(0x9370DB) // Fioletowy motyw
+            .setTitle(`📦 Nowy Texture Pack: ${title}`)
+            .setDescription(desc)
+            .addFields(
+                { name: '🌐 Serwer', value: server, inline: true },
+                { name: '⚔️ Tryb / Rip', value: mode, inline: true },
+                { name: '⚙️ Wersja', value: version, inline: true },
+                { name: '👤 Autor', value: authorName, inline: true }
+            )
+            .setImage(image)
+            .setFooter({ text: 'Xenon TxT • System zarządzania paczkami', iconURL: authorAvatar })
+            .setTimestamp();
+
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setLabel('Pobierz z Mediafire')
+                .setStyle(ButtonStyle.Link)
+                .setURL(link)
+        );
+
+        // Odpowiedź na Discordzie z embedem i przyciskiem
         await interaction.reply({ 
-            content: `✅ Paczka **${title}** została pomyślnie dodana!`, 
-            ephemeral: true 
+            content: `✅ Paczka **${title}** została pomyślnie dodana do bazy i na stronę!`, 
+            embeds: [embed],
+            components: [row],
+            ephemeral: false // Zmień na true, jeśli chcesz, żeby widział to tylko Ty
         });
     }
 });
