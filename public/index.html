@@ -16,7 +16,7 @@
     }
 
     body {
-      background-color: #0b0b0e;
+      background-color: #080b10;
       color: #f3f4f6;
       min-height: 100vh;
       display: flex;
@@ -25,7 +25,7 @@
       position: relative;
     }
 
-    /* TŁO CANVAS POD MGŁĘ */
+    /* TŁO CANVAS POD NIEBIESKĄ MGŁĘ */
     #trail-canvas {
       position: fixed;
       top: 0;
@@ -36,6 +36,7 @@
       z-index: 0;
     }
 
+    /* Wszystkie główne elementy muszą być nad Canvasem */
     nav, .section, footer, .modal-overlay, .lightbox-overlay {
       position: relative;
       z-index: 1;
@@ -64,17 +65,11 @@
     }
 
     .logo-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.1rem;
-      color: #ffffff;
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.4);
     }
 
     .nav-links {
@@ -143,7 +138,7 @@
     }
 
     .hero-title .highlight {
-      background: linear-gradient(135deg, #c084fc, #8b5cf6, #6366f1);
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9, #0284c7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-style: italic;
@@ -164,7 +159,7 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
       color: #ffffff !important;
       border: none;
       padding: 14px 36px;
@@ -172,13 +167,13 @@
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 4px 25px rgba(139, 92, 246, 0.35);
+      box-shadow: 0 4px 25px rgba(14, 165, 233, 0.35);
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 30px rgba(139, 92, 246, 0.5);
+      box-shadow: 0 6px 30px rgba(14, 165, 233, 0.5);
     }
 
     .btn-secondary {
@@ -263,7 +258,7 @@
     }
 
     .search-input:focus {
-      border-color: #8b5cf6;
+      border-color: #0ea5e9;
     }
 
     .folder-grid {
@@ -273,7 +268,7 @@
     }
 
     .folder-card {
-      background: rgba(18, 18, 23, 0.6);
+      background: rgba(14, 18, 27, 0.6);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 16px;
@@ -289,7 +284,7 @@
     .folder-card:hover {
       transform: translateY(-5px);
       background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(139, 92, 246, 0.4);
+      border-color: rgba(14, 165, 233, 0.4);
     }
 
     .folder-card img {
@@ -319,9 +314,9 @@
     }
 
     .server-hero-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(139, 92, 246, 0.08));
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(14, 165, 233, 0.08));
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(14, 165, 233, 0.2);
       border-radius: 20px;
       padding: 30px;
       margin-bottom: 40px;
@@ -345,7 +340,7 @@
     }
 
     .server-ip-large strong {
-      color: #a855f7;
+      color: #38bdf8;
       font-size: 1.25rem;
       margin-left: 6px;
       letter-spacing: 0.5px;
@@ -375,13 +370,13 @@
     }
 
     .btn-action-lg.purple {
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
       border: none;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
     }
 
     .btn-action-lg.purple:hover {
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      background: linear-gradient(135deg, #0284c7, #0369a1);
     }
 
     /* PACZKI GRID */
@@ -392,7 +387,7 @@
     }
 
     .pack-card {
-      background: rgba(18, 18, 23, 0.6);
+      background: rgba(14, 18, 27, 0.6);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 16px;
@@ -404,7 +399,7 @@
 
     .pack-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(139, 92, 246, 0.3);
+      border-color: rgba(14, 165, 233, 0.3);
     }
 
     .pack-card img {
@@ -431,8 +426,8 @@
       align-self: flex-start;
       font-size: 0.72rem;
       padding: 4px 10px;
-      background: rgba(139, 92, 246, 0.15);
-      color: #c084fc;
+      background: rgba(14, 165, 233, 0.15);
+      color: #38bdf8;
       border-radius: 6px;
       margin-bottom: 12px;
       font-weight: 600;
@@ -445,7 +440,7 @@
       padding-top: 12px;
     }
 
-    /* MODAL PODGLĄDU */
+    /* WYSUWANE OKNO PODGLĄDU (MODAL) */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -466,7 +461,7 @@
     }
 
     .modal {
-      background: #121217;
+      background: #0e121b;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 24px;
       width: 92%;
@@ -592,8 +587,8 @@
     .modal-tag {
       font-size: 0.75rem;
       padding: 3px 8px;
-      background: rgba(139, 92, 246, 0.2);
-      color: #c084fc;
+      background: rgba(14, 165, 233, 0.2);
+      color: #38bdf8;
       border-radius: 6px;
       font-weight: 600;
     }
@@ -633,7 +628,7 @@
       border-radius: 12px;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
       transform: scale(0.95);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .lightbox-overlay.active .lightbox-img {
@@ -675,11 +670,13 @@
 </head>
 <body>
 
+  <!-- Canvas dla niebieskiej mgiełki / smugi -->
   <canvas id="trail-canvas"></canvas>
 
+  <!-- Nawigacja -->
   <nav>
     <div class="logo" onclick="showSection('home-section')">
-      <div class="logo-icon">X</div>
+      <img src="https://i.imgur.com/QxWlqmw.png" alt="Xenon Logo" class="logo-icon">
       <span>Xenon TxT</span>
     </div>
 
@@ -696,14 +693,17 @@
       <h1 class="hero-title">
         Znajdź <span class="highlight">Idealne TXT</span> Dla Siebie
       </h1>
+      
       <p>
         Wybieraj z najlepszych, w pełni zoptymalizowanych paczek zasobów. Zwiększ swoje FPS-y, popraw widoczność w walce i zyskaj przewagę na każdym serwerze!
       </p>
+
       <div class="hero-buttons">
         <button class="btn-primary" onclick="showSection('categories-section')">Przeglądaj Paczki</button>
       </div>
     </div>
 
+    <!-- Pasek Serwerów na dole -->
     <div class="servers-bar">
       <div class="server-item" onclick="showSection('anarchia-section')">
         <img src="https://i.imgur.com/G9ru8n0.png" alt="Anarchia">
@@ -768,8 +768,30 @@
       </div>
     </div>
 
-    <div class="pack-grid" id="anarchia-grid">
-      <!-- Generowane dynamicznie -->
+    <div class="pack-grid">
+      <div class="pack-card" data-title="anarchia dark pvp">
+        <img src="https://i.imgur.com/G9ru8n0.png" alt="Anarchia Dark" onclick="openModal('Anarchia Dark 16x', 'https://i.imgur.com/G9ru8n0.png', 'Zoptymalizowana paczka stworzona do szybkich i wymagających walk na Anarchia.GG. Posiada ciemniejsze GUI, mocno obniżone miecze dla lepszej widoczności oraz wyczyśćony ogień.', 'LX Studio', '16x16, PvP, Dark GUI', 'Anarchia.GG', '1.16 - 1.21', 'https://example.com/download')">
+        <div class="pack-card-body">
+          <span class="pack-badge">16x16 | PvP</span>
+          <h3>Anarchia Dark</h3>
+          <div class="pack-card-actions">
+            <button class="btn-secondary" style="flex: 1;" onclick="openModal('Anarchia Dark 16x', 'https://i.imgur.com/G9ru8n0.png', 'Zoptymalizowana paczka stworzona do szybkich i wymagających walk na Anarchia.GG. Posiada ciemniejsze GUI, mocno obniżone miecze dla lepszej widoczności oraz wyczyśćony ogień.', 'LX Studio', '16x16, PvP, Dark GUI', 'Anarchia.GG', '1.16 - 1.21', 'https://example.com/download')">Podgląd</button>
+            <a href="https://example.com/download" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px;">Pobierz</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pack-card" data-title="crystal fps boost">
+        <img src="https://i.imgur.com/G9ru8n0.png" alt="Crystal FPS" onclick="openModal('Crystal FPS Boost', 'https://i.imgur.com/G9ru8n0.png', 'Lekka paczka ukierunkowana na płynność i maksymalizację klatek na sekundę (FPS) podczas walki na kryształy i totemy.', 'Xenon Dev', 'FPS Boost, Crystal, Low Poly', 'Anarchia.GG', '1.18 - 1.21', 'https://example.com/download')">
+        <div class="pack-card-body">
+          <span class="pack-badge">FPS Boost</span>
+          <h3>Crystal FPS</h3>
+          <div class="pack-card-actions">
+            <button class="btn-secondary" style="flex: 1;" onclick="openModal('Crystal FPS Boost', 'https://i.imgur.com/G9ru8n0.png', 'Lekka paczka ukierunkowana na płynność i maksymalizację klatek na sekundę (FPS) podczas walki na kryształy i totemy.', 'Xenon Dev', 'FPS Boost, Crystal, Low Poly', 'Anarchia.GG', '1.18 - 1.21', 'https://example.com/download')">Podgląd</button>
+            <a href="https://example.com/download" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px;">Pobierz</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -793,8 +815,18 @@
       </div>
     </div>
 
-    <div class="pack-grid" id="minestar-grid">
-      <!-- Generowane dynamicznie -->
+    <div class="pack-grid">
+      <div class="pack-card" data-title="minestar pvp edit custom gui">
+        <img src="https://i.imgur.com/gcE2omD.jpeg" alt="Minestar PvP" onclick="openModal('Minestar PvP Edit', 'https://i.imgur.com/gcE2omD.jpeg', 'Paczka ze skróconymi mieczami, wyraźną celownicą oraz unikalnym motywem kolorystycznym dopasowanym do serwera Minestar.', 'LX Studio', 'Custom GUI, PvP Edit', 'Minestar.GG', '1.16 - 1.21', 'https://example.com/download')">
+        <div class="pack-card-body">
+          <span class="pack-badge">Custom GUI</span>
+          <h3>Minestar PvP</h3>
+          <div class="pack-card-actions">
+            <button class="btn-secondary" style="flex: 1;" onclick="openModal('Minestar PvP Edit', 'https://i.imgur.com/gcE2omD.jpeg', 'Paczka ze skróconymi mieczami, wyraźną celownicą oraz unikalnym motywem kolorystycznym dopasowanym do serwera Minestar.', 'LX Studio', 'Custom GUI, PvP Edit', 'Minestar.GG', '1.16 - 1.21', 'https://example.com/download')">Podgląd</button>
+            <a href="https://example.com/download" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px;">Pobierz</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -813,8 +845,18 @@
       </div>
     </div>
 
-    <div class="pack-grid" id="inne-grid">
-      <!-- Generowane dynamicznie -->
+    <div class="pack-grid">
+      <div class="pack-card" data-title="bare bones trailer style">
+        <img src="https://picsum.photos/600/400?random=30" alt="Bare Bones" onclick="openModal('Bare Bones Deluxe', 'https://picsum.photos/600/400?random=30', 'Paczka nadająca grze wygląd znany ze zwiastunów gry Minecraft! Proste, czyste i bardzo estetyczne tekstury.', 'RobotPanda', 'Trailer Style, Clean, Default 16x', 'Ogólny', '1.8 - 1.21', 'https://example.com/download')">
+        <div class="pack-card-body">
+          <span class="pack-badge">Trailer Style</span>
+          <h3>Bare Bones</h3>
+          <div class="pack-card-actions">
+            <button class="btn-secondary" style="flex: 1;" onclick="openModal('Bare Bones Deluxe', 'https://picsum.photos/600/400?random=30', 'Paczka nadająca grze wygląd znany ze zwiastunów gry Minecraft! Proste, czyste i bardzo estetyczne tekstury.', 'RobotPanda', 'Trailer Style, Clean, Default 16x', 'Ogólny', '1.8 - 1.21', 'https://example.com/download')">Podgląd</button>
+            <a href="https://example.com/download" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px;">Pobierz</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -822,11 +864,14 @@
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()">✕</button>
+      
       <h3 id="modalTitle">Nazwa Paczki</h3>
+      
       <div class="modal-img-container" onclick="openLightbox()">
         <img id="modalImg" src="" alt="Podgląd">
         <div class="modal-img-hint">🔍 Kliknij, aby powiększyć</div>
       </div>
+
       <div class="modal-details-grid">
         <div class="detail-item">
           <span class="detail-label">Autor</span>
@@ -845,7 +890,9 @@
           <div class="modal-tags" id="modalTags"></div>
         </div>
       </div>
+
       <p id="modalDesc">Opis paczki...</p>
+      
       <a id="modalDownload" href="#" target="_blank" class="btn-primary" style="display: block; text-align: center; text-decoration: none;">Pobierz Paczkę (.ZIP)</a>
     </div>
   </div>
@@ -861,105 +908,12 @@
   </footer>
 
   <script>
-    /* BAZA PACZEK (Tu bot lub Ty możecie łatwo dodawać nowe pozycje) */
-    let packsData = [
-      {
-        id: 'anarchia-dark',
-        category: 'anarchia',
-        title: 'Anarchia Dark',
-        badge: '16x16 | PvP',
-        img: 'https://i.imgur.com/G9ru8n0.png',
-        desc: 'Zoptymalizowana paczka stworzona do szybkich i wymagających walk na Anarchia.GG. Posiada ciemniejsze GUI, mocno obniżone miecze dla lepszej widoczności oraz wyczyszczony ogień.',
-        author: 'LX Studio',
-        tags: '16x16, PvP, Dark GUI',
-        server: 'Anarchia.GG',
-        version: '1.16 - 1.21',
-        downloadUrl: 'https://example.com/download'
-      },
-      {
-        id: 'crystal-fps',
-        category: 'anarchia',
-        title: 'Crystal FPS',
-        badge: 'FPS Boost',
-        img: 'https://i.imgur.com/G9ru8n0.png',
-        desc: 'Lekka paczka ukierunkowana na płynność i maksymalizację klatek na sekundę (FPS) podczas walki na kryształy i totemy.',
-        author: 'Xenon Dev',
-        tags: 'FPS Boost, Crystal, Low Poly',
-        server: 'Anarchia.GG',
-        version: '1.18 - 1.21',
-        downloadUrl: 'https://example.com/download'
-      },
-      {
-        id: 'minestar-pvp',
-        category: 'minestar',
-        title: 'Minestar PvP',
-        badge: 'Custom GUI',
-        img: 'https://i.imgur.com/gcE2omD.jpeg',
-        desc: 'Paczka ze skróconymi mieczami, wyraźną celownicą oraz unikalnym motywem kolorystycznym dopasowanym do serwera Minestar.',
-        author: 'LX Studio',
-        tags: 'Custom GUI, PvP Edit',
-        server: 'Minestar.GG',
-        version: '1.16 - 1.21',
-        downloadUrl: 'https://example.com/download'
-      },
-      {
-        id: 'bare-bones',
-        category: 'inne',
-        title: 'Bare Bones',
-        badge: 'Trailer Style',
-        img: 'https://picsum.photos/600/400?random=30',
-        desc: 'Paczka nadająca grze wygląd znany ze zwiastunów gry Minecraft! Proste, czyste i bardzo estetyczne tekstury.',
-        author: 'RobotPanda',
-        tags: 'Trailer Style, Clean, Default 16x',
-        server: 'Ogólny',
-        version: '1.8 - 1.21',
-        downloadUrl: 'https://example.com/download'
-      }
-    ];
-
-    // Funkcja renderująca paczki do odpowiednich kategorii
-    function renderPacks() {
-      const anarchiaGrid = document.getElementById('anarchia-grid');
-      const minestarGrid = document.getElementById('minestar-grid');
-      const inneGrid = document.getElementById('inne-grid');
-
-      anarchiaGrid.innerHTML = '';
-      minestarGrid.innerHTML = '';
-      inneGrid.innerHTML = '';
-
-      packsData.forEach(pack => {
-        const cardHTML = `
-          <div class="pack-card" data-title="${pack.title.toLowerCase()} ${pack.tags.toLowerCase()}">
-            <img src="${pack.img}" alt="${pack.title}" onclick="openModalById('${pack.id}')">
-            <div class="pack-card-body">
-              <span class="pack-badge">${pack.badge}</span>
-              <h3>${pack.title}</h3>
-              <div class="pack-card-actions">
-                <button class="btn-secondary" style="flex: 1;" onclick="openModalById('${pack.id}')">Podgląd</button>
-                <a href="${pack.downloadUrl}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px;">Pobierz</a>
-              </div>
-            </div>
-          </div>
-        `;
-
-        if (pack.category === 'anarchia') anarchiaGrid.innerHTML += cardHTML;
-        else if (pack.category === 'minestar') minestarGrid.innerHTML += cardHTML;
-        else if (pack.category === 'inne') inneGrid.innerHTML += cardHTML;
-      });
-    }
-
-    function openModalById(id) {
-      const pack = packsData.find(p => p.id === id);
-      if (!pack) return;
-      openModal(pack.title, pack.img, pack.desc, pack.author, pack.tags, pack.server, pack.version, pack.downloadUrl);
-    }
-
-    // Uruchomienie renderowania przy starcie
-    renderPacks();
-
-    /* SKRYPT FIOLETOWEJ MGIEŁKI KURSORA */
+    /* ======================================================
+       SKRYPT NIEBIESKIEJ SMUGI / MGIEŁKI KURSORA (GLOW TRAIL)
+       ====================================================== */
     const canvas = document.getElementById('trail-canvas');
     const ctx = canvas.getContext('2d');
+
     let particles = [];
     const maxParticles = 40;
 
@@ -976,23 +930,29 @@
         this.y = y;
         this.size = Math.random() * 45 + 35;
         this.alpha = 0.35;
-        this.color = { r: 139, g: 92, b: 246 };
+        this.color = { r: 14, g: 165, b: 233 };
         this.vx = (Math.random() - 0.5) * 0.6;
         this.vy = (Math.random() - 0.5) * 0.6;
       }
+
       update() {
         this.x += this.vx;
         this.y += this.vy;
         this.alpha -= 0.009;
         if (this.size > 2) this.size -= 0.3;
       }
+
       draw() {
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
-        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, this.size
+        );
         gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`);
-        gradient.addColorStop(0.6, `rgba(99, 102, 241, ${this.alpha * 0.4})`);
+        gradient.addColorStop(0.6, `rgba(3, 105, 161, ${this.alpha * 0.4})`);
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -1003,34 +963,50 @@
 
     window.addEventListener('mousemove', (e) => {
       for (let i = 0; i < 2; i++) {
-        particles.push(new Particle(e.clientX + (Math.random() - 0.5) * 10, e.clientY + (Math.random() - 0.5) * 10));
+        particles.push(new Particle(
+          e.clientX + (Math.random() - 0.5) * 10,
+          e.clientY + (Math.random() - 0.5) * 10
+        ));
       }
-      if (particles.length > maxParticles) particles.shift();
+
+      if (particles.length > maxParticles) {
+        particles.shift();
+      }
     });
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
+
         if (particles[i].alpha <= 0) {
           particles.splice(i, 1);
           i--;
         }
       }
+
       requestAnimationFrame(animate);
     }
     animate();
 
-    /* OGÓLNA LOGIKA INTERFEJSU */
+
+    /* ======================================================
+       GŁÓWNA LOGIKA STRONY
+       ====================================================== */
     function showSection(sectionId) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(sectionId).classList.add('active');
+
       document.getElementById('nav-home').classList.remove('active');
       document.getElementById('nav-categories').classList.remove('active');
 
-      if (sectionId === 'home-section') document.getElementById('nav-home').classList.add('active');
-      else document.getElementById('nav-categories').classList.add('active');
+      if (sectionId === 'home-section') {
+        document.getElementById('nav-home').classList.add('active');
+      } else {
+        document.getElementById('nav-categories').classList.add('active');
+      }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1039,13 +1015,16 @@
       navigator.clipboard.writeText(ipText).then(() => {
         const originalText = btnElement.innerText;
         btnElement.innerText = '✔ Skopiowano!';
-        setTimeout(() => { btnElement.innerText = originalText; }, 2000);
+        setTimeout(() => {
+          btnElement.innerText = originalText;
+        }, 2000);
       });
     }
 
     function filterPacks() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const packs = document.querySelectorAll('.pack-card');
+
       packs.forEach(pack => {
         const title = pack.getAttribute('data-title');
         if (title.includes(query)) {
@@ -1067,7 +1046,8 @@
 
       const tagsContainer = document.getElementById('modalTags');
       tagsContainer.innerHTML = '';
-      tagsString.split(',').forEach(tag => {
+      const tagsArray = tagsString.split(',');
+      tagsArray.forEach(tag => {
         const span = document.createElement('span');
         span.className = 'modal-tag';
         span.innerText = tag.trim();
